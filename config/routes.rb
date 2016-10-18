@@ -1,8 +1,7 @@
 Rails.application.routes.draw do
 
-
-  # Survivor
-  post 'survivors/create', as: :create_survivor
-
+  resources :survivors, only: [:create] do
+    patch :update_last_location, on: :member
+  end
 
 end

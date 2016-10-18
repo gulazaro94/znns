@@ -10,4 +10,9 @@ class Survivor < ApplicationRecord
   validates :last_location_lat, numericality: {greater_than: -86, less_than: 86}
   validates :last_location_lon, numericality: {greater_than: -181, less_than: 181}
 
+  def reset_location
+    self.last_location_lat = nil
+    self.last_location_lon = nil
+  end
+
 end
