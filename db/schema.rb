@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161018174142) do
+ActiveRecord::Schema.define(version: 20161018222101) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,15 @@ ActiveRecord::Schema.define(version: 20161018174142) do
     t.index ["survivor_id"], name: "index_infection_notifications_on_survivor_id", using: :btree
   end
 
+  create_table "items", force: :cascade do |t|
+    t.integer  "survivor_id"
+    t.integer  "kind",        limit: 2
+    t.integer  "quantity"
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+    t.index ["survivor_id"], name: "index_items_on_survivor_id", using: :btree
+  end
+
   create_table "survivors", force: :cascade do |t|
     t.string   "name",              limit: 150
     t.integer  "age",               limit: 2
@@ -35,4 +44,5 @@ ActiveRecord::Schema.define(version: 20161018174142) do
     t.boolean  "infected",                                              default: false
   end
 
+  add_foreign_key "items", "survivors"
 end

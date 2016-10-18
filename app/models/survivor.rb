@@ -4,8 +4,11 @@ class Survivor < ApplicationRecord
 
   MAX_ALLOWED_AGE = 122
 
+  has_many :items, inverse_of: :survivor
   has_many :done_infection_notifications, class_name: 'InfectionNotification', foreign_key: :survivor_id
   has_many :received_infection_notifications, class_name: 'InfectionNotification', foreign_key: :infected_id
+
+  accepts_nested_attributes_for :items
 
   validates :name, :age, :gender, :last_location_lat, :last_location_lon, presence: true
   validates :name, length: {maximum: 150}
