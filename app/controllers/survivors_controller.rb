@@ -2,8 +2,11 @@ class SurvivorsController < ApplicationController
 
   def create
     survivor = Survivor.new(survivor_params)
-    survivor.save
-    render json: survivor
+    if survivor.save
+      render json: {success: true, id: survivor.id}
+    else
+      render json: {success: false, errors: survivor.errors}
+    end
   end
 
   private
