@@ -60,4 +60,42 @@ describe SurvivorsController, type: :controller do
       expect(survivor.last_location_lat).to eq(survivor.reload.last_location_lat)
     end
   end
+
+  describe '#notify_infection' do
+
+    it 'must add to infection_notifications' do
+      survivor = create :survivor
+      infected = create :survivor
+
+      post :notify_infection, params: {id: survivor.id, infected_id: infected.id}
+
+      expect(survivor.done_infection_notifications.count).to eq(1)
+      expect(infected.received_infection_notifications.count).to eq(1)
+      expect(infected.reload.infected?).to be_falsey
+    end
+
+    it 'must flag as infected after three notifications' do
+      infected = create :survivor
+
+      3.times do
+        survivor = create :survivor
+        post :notify_infection, params: {id: survivor.id, infected_id: infected.id}
+
+        response_hash = JSON.parse(response.body)
+        expect(response_hash['success']).to eq(true)
+      end
+
+      expect(infected.reload.infected?).to be_truthy
+    end
+
+    it 'must fail if same survivor try to notify infected more than once' do
+      infected = create :survivor
+      survivor = create :survivor
+
+      2.times { post :notify_infection, params: {id: survivor.id, infected_id: infected.id} }
+
+      response_hash = JSON.parse(response.body)
+      expect(response_hash['success']).to eq(false)
+    end
+  end
 end

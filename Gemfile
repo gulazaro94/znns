@@ -38,3 +38,4 @@ group :development do
 end
 
 gem 'dotenv-rails', '~> 2.1.1'
+gem 'interactor', '~> 3.1'

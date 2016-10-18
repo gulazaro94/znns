@@ -21,6 +21,19 @@ class SurvivorsController < ApplicationController
     end
   end
 
+  def notify_infection
+    survivor = Survivor.find(params[:id])
+    infected = Survivor.find(params[:infected_id])
+
+    result = NotifyInfection.call(survivor: survivor, infected: infected)
+
+    if result.success?
+      render json: {success: true}
+    else
+      render json: {success: false, errors: result.error}
+    end
+  end
+
   private
 
   def survivor_params
