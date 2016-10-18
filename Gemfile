@@ -21,6 +21,7 @@ gem 'puma', '~> 3.0'
 # gem 'rack-cors'
 group :test do
   gem 'rspec-rails', '~> 3.5.2'
+  gem 'database_cleaner', '~> 1.5.3'
 end
 
 group :development, :test do
