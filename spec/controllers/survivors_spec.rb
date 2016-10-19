@@ -5,19 +5,11 @@ describe SurvivorsController, type: :controller do
   describe '#create' do
 
     it 'must save survivor with correct parameters' do
-      survivor_attributes = {
-        name: 'Gustavo',
-        age: 35,
-        gender: 'male',
-        last_location_lat: -22.224859,
-        last_location_lon: -49.962380
-      }
-
-      post :create, params: {survivor: survivor_attributes}, format: :json
+      post :create, params: {survivor: attributes_for(:survivor)}
 
       survivor = Survivor.last
       expect(survivor).to be_present
-      survivor_attributes.each do |attribute, value|
+      attributes_for(:survivor).each do |attribute, value|
         expect(survivor.send(attribute)).to eq(value)
       end
       expect(JSON.parse(response.body)['success']).to eq(true)
@@ -35,6 +27,26 @@ describe SurvivorsController, type: :controller do
       response_hash = JSON.parse(response.body)
       expect(response_hash['success']).to eq(false)
     end
+
+    it 'must add the survivor items', :focus do
+      survivor_attributes = attributes_for(:survivor)
+      survivor_attributes[:items] = {
+        water: 10,
+        food: 130,
+        medication: 2,
+        ammunition: 0
+      }
+
+      post :create, params: {survivor: survivor_attributes}
+
+      survivor = Survivor.last
+      expect(survivor.items.count).to eq(4)
+      expect(survivor.quantity_of_water).to eq(10)
+      expect(survivor.quantity_of_food).to eq(130)
+      expect(survivor.quantity_of_medication).to eq(2)
+      expect(survivor.quantity_of_ammunition).to eq(0)
+    end
+
   end
 
   describe '#update_last_location' do
@@ -42,7 +54,7 @@ describe SurvivorsController, type: :controller do
     it 'must update last locations when passing correct parameters' do
       survivor = create :survivor
 
-      patch :update_last_location, params: {id: survivor.id, survivor: {last_location_lat: 13.13, last_location_lon: 45.45}}, format: :json
+      patch :update_last_location, params: {id: survivor.id, survivor: {last_location_lat: 13.13, last_location_lon: 45.45}}
 
       response_hash = JSON.parse(response.body)
       expect(response_hash['success']).to eq(true)
@@ -53,7 +65,7 @@ describe SurvivorsController, type: :controller do
     it 'must fail if some parameter is invalid' do
       survivor = create :survivor
 
-      patch :update_last_location, params: {id: survivor.id, survivor: {last_location_lat: -1000.123, last_location_lon: nil}}, format: :json
+      patch :update_last_location, params: {id: survivor.id, survivor: {last_location_lat: -1000.123, last_location_lon: nil}}
 
       response_hash = JSON.parse(response.body)
       expect(response_hash['success']).to eq(false)
