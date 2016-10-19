@@ -1,24 +1,15 @@
-# README
+# ZNNS
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## API Documentation
+> http://docs.znns.apiary.io/
 
-Things you may want to cover:
+## Running
 
-* Ruby version
+    $ git clone https://github.com/gulazaro94/znns.git
+    $ cd znns
+    # setup your database configs
+    $ bundle install
+    $ rspec # test the application
+    $ rails s
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Now access http://localhost:3000
