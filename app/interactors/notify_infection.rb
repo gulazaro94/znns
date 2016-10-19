@@ -4,7 +4,8 @@ class NotifyInfection
   # params: survivor(Survivor), infected(Survivor)
   def call
 
-    can?
+    validate_infection!
+    validate_uniqueness!
 
     register_infection
 
@@ -27,11 +28,13 @@ class NotifyInfection
     end
   end
 
-  def can?
+  def validate_infection!
     if context.infected.infected?
       context.fail!(error: 'This survivor is already flagged as infected! Thank you for reporting')
     end
+  end
 
+  def validate_uniqueness!
     if InfectionNotification.find_by(survivor_id: context.survivor.id, infected_id: context.infected.id)
       context.fail!(error: 'You have already notified this infection. Thanks')
     end
