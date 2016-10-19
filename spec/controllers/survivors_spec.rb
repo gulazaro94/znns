@@ -28,7 +28,7 @@ describe SurvivorsController, type: :controller do
       expect(response_hash['success']).to eq(false)
     end
 
-    it 'must add the survivor items', :focus do
+    it 'must add the survivor items' do
       survivor_attributes = attributes_for(:survivor)
       survivor_attributes[:items] = {
         water: 10,
@@ -105,6 +105,69 @@ describe SurvivorsController, type: :controller do
       survivor = create :survivor
 
       2.times { post :notify_infection, params: {id: survivor.id, infected_id: infected.id} }
+
+      response_hash = JSON.parse(response.body)
+      expect(response_hash['success']).to eq(false)
+    end
+  end
+
+  describe '#trade_items' do
+
+    it 'must trade when matching the sum of points' do
+      survivor_one = create :survivor, items_attributes: [{kind: :water, quantity: 3}, {kind: :food, quantity: 11}]
+      survivor_two = create :survivor, items_attributes: [{kind: :water, quantity: 7}, {kind: :food, quantity: 4}, {kind: :ammunition, quantity: 2}]
+
+      post :trade_items, params: {survivors: [
+        {id: survivor_one.id, items: {food: 3}},
+        {id: survivor_two.id, items: {water: 2, ammunition: 1}}
+      ]}
+
+      response_hash = JSON.parse(response.body)
+      expect(response_hash['success']).to eq(true)
+
+      expect(survivor_one.quantity_of_water).to eq(5)
+      expect(survivor_one.quantity_of_food).to eq(8)
+      expect(survivor_one.quantity_of_ammunition).to eq(1)
+
+      expect(survivor_two.quantity_of_water).to eq(5)
+      expect(survivor_two.quantity_of_food).to eq(7)
+      expect(survivor_two.quantity_of_ammunition).to eq(1)
+    end
+
+    it 'must fail when the survivor does not have enough items' do
+      survivor_one = create :survivor, items_attributes: [{kind: :water, quantity: 3}, {kind: :food, quantity: 2}]
+      survivor_two = create :survivor, items_attributes: [{kind: :water, quantity: 7}, {kind: :food, quantity: 4}, {kind: :ammunition, quantity: 2}]
+
+      post :trade_items, params: {survivors: [
+        {id: survivor_one.id, items: {food: 3}},
+        {id: survivor_two.id, items: {water: 2, ammunition: 1}}
+      ]}
+
+      response_hash = JSON.parse(response.body)
+      expect(response_hash['success']).to eq(false)
+    end
+
+    it 'must fail when the total points of the items does not match' do
+      survivor_one = create :survivor, items_attributes: [{kind: :water, quantity: 3}, {kind: :food, quantity: 11}]
+      survivor_two = create :survivor, items_attributes: [{kind: :water, quantity: 7}, {kind: :food, quantity: 4}, {kind: :ammunition, quantity: 2}]
+
+      post :trade_items, params: {survivors: [
+        {id: survivor_one.id, items: {food: 3}},
+        {id: survivor_two.id, items: {water: 2, ammunition: 2}}
+      ]}
+
+      response_hash = JSON.parse(response.body)
+      expect(response_hash['success']).to eq(false)
+    end
+
+    it 'must fail if some survivor is infected' do
+      survivor_one = create :survivor, :infected, items_attributes: [{kind: :water, quantity: 3}, {kind: :food, quantity: 11}]
+      survivor_two = create :survivor, items_attributes: [{kind: :water, quantity: 7}, {kind: :food, quantity: 4}, {kind: :ammunition, quantity: 2}]
+
+      post :trade_items, params: {survivors: [
+        {id: survivor_one.id, items: {food: 3}},
+        {id: survivor_two.id, items: {water: 2, ammunition: 1}}
+      ]}
 
       response_hash = JSON.parse(response.body)
       expect(response_hash['success']).to eq(false)

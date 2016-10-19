@@ -18,8 +18,12 @@ class Survivor < ApplicationRecord
 
   Item.kinds.keys.each do |item_kind|
     define_method("quantity_of_#{item_kind}") do
-      items.find { |item| item.kind == item_kind }&.quantity || 0
+      item_quantity_by_kind(item_kind)
     end
+  end
+
+  def item_quantity_by_kind(item_kind)
+    items.find { |item| item.kind == item_kind.to_s }&.quantity || 0
   end
 
   def reset_location

@@ -34,6 +34,16 @@ class SurvivorsController < ApplicationController
     end
   end
 
+  def trade_items
+    result = TradeItems.call(trade_items_params)
+
+    if result.success?
+      render json: {success: true}
+    else
+      render json: {success: false, error: result.error}
+    end
+  end
+
   private
 
   def survivor_params
@@ -54,6 +64,10 @@ class SurvivorsController < ApplicationController
 
   def update_last_location_params
     params.require(:survivor).permit(:last_location_lat, :last_location_lon)
+  end
+
+  def trade_items_params
+    params.permit(survivors: [:id, items: Item.kinds.keys])
   end
 
 end

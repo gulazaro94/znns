@@ -13,4 +13,12 @@ class Item < ApplicationRecord
 
   validates :kind, :survivor, :quantity, presence: true
   validates :quantity, numericality: {greater_than_or_equal_to: 0}
+
+  def self.sum_items_points(items)
+    total = 0
+    items.each do |kind, quantity|
+      total += KIND_TRADE_VALUE[kind.to_sym] * quantity.to_i
+    end
+    total
+  end
 end
