@@ -49,7 +49,7 @@ describe ReportsController do
 
   describe '#lost_points' do
 
-    it 'must return the correct sum of points lost because of infected survivors', :focus do
+    it 'must return the correct sum of points lost because of infected survivors' do
       create :survivor, :infected, items_attributes: [{kind: :water, quantity: 30}, {kind: :food, quantity: 55}]
       create :survivor, items_attributes: [{kind: :water, quantity: 10}, {kind: :food, quantity: 20}]
       create :survivor, :infected, items_attributes: [{kind: :medication, quantity: 3}, {kind: :food, quantity: 5}]
