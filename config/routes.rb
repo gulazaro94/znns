@@ -6,4 +6,11 @@ Rails.application.routes.draw do
     post :trade_items, on: :collection
   end
 
+  namespace :reports do
+    get :infected_percentage
+    get :non_infected_percentage
+    get :items_quantity_average
+    get :lost_points
+  end
+
 end

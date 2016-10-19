@@ -16,6 +16,9 @@ class Survivor < ApplicationRecord
   validates :last_location_lat, numericality: {greater_than: -86, less_than: 86}
   validates :last_location_lon, numericality: {greater_than: -181, less_than: 181}
 
+  scope :infected, -> { where(infected: true) }
+  scope :not_infected, -> { where(infected: false) }
+
   Item.kinds.keys.each do |item_kind|
     define_method("quantity_of_#{item_kind}") do
       item_quantity_by_kind(item_kind)
